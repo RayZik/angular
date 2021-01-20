@@ -1,0 +1,290 @@
+<div class="main">
+
+    <div class="featured">
+        <div>
+
+            <div class="title">
+
+                <h2>{{experienceDetail.title || '-'}}
+
+                    <div class="header-actions" >
+                        <div class="btn-group" role="group" aria-label="Basic example">
+
+                            <button *ngIf="userType && userType == 'client'" type="button"
+                                [routerLink]="['/experience/edit/'+experienceId]" class="cus-btn">Edit</button>
+
+                            <button *ngIf="userType && userType == 'client'" type="button" (click)='deleteExp()'
+                                class="cus-btn">Delete</button>
+
+                            <button
+                                *ngIf="userType && userType == 'client' && experienceDetail.type != 'published' && userList.invited_by =='' "
+                                type="button" (click)='firstShare()' class="cus-btn">Assign Lawyer</button>
+
+                            <!-- <button *ngIf="userType && userType == 'client' && experienceDetail.type != 'published'"
+                                type="button" (click)='shareExpOthers()' class="cus-btn">Share With Others</button> -->
+
+                            <!-- <button *ngIf="userType && userType == 'client' && experienceDetail.type == 'published'"
+                                type="button" (click)='shareExpOthers()' class="cus-btn">Share Again</button> -->
+                            <!-- <div *ngIf= "user of userList"> -->
+                            <button
+                                *ngIf="userType && userType == 'client' && experienceDetail.type != 'published' && userList.invited_by !=''   "
+                                type="button" (click)='shareExp()' class="cus-btn">Share</button>
+
+                            <button type="button" (click)='location.back()' class="cus-btn">Cancel</button>
+                            </div>
+
+
+                        </div>
+
+                    
+
+
+                </h2>
+                <!-- <span class="byline">Integer sit amet aliquet pretium</span> -->
+
+            </div>
+
+            <p>{{experienceDetail.description || '-'}}</p>
+            <p class="list-details">
+                <span><strong>Created:</strong>
+                    {{experienceDetail?.createdAt ? (experienceDetail?.createdAt | localdateformat:'MMM DD,YYYY h:mm
+                    A'): '-'}}</span>
+                <span>|</span> <span><strong>Updated:</strong>
+                    {{experienceDetail?.updatedAt ? (experienceDetail?.updatedAt | localdateformat:'MMM DD,YYYY h:mm
+                    A'): '-'}}</span>
+            </p>
+
+            <div class="upload-tags">
+                <h4>Tags:</h4>
+                <ul>
+                    <li class="tag-container" *ngFor='let tag of tagList let i of index'>{{tag._id || '-'}} ({{tag.count
+                        || '-'}})
+                        <span> |</span>
+                    </li>
+                    <li *ngIf='!tagList.length'>
+                        <p>No Tag Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-image">
+                <h4>Photos:<button *ngIf="imageList.length" id="view-all" (click)="viewMedia('image')"
+                        class="cus-btn">View All</button></h4>
+                <ul>
+                    <li class="image-container" *ngFor='let image of imageList'><img [src]="image.media_url" alt="">
+                        <div class="chat_ib">
+                            <h5>{{(image.media_name | localdateformat:'MMM DD,YYYY h:mm A') == 'Invalid date' ?
+                                image.media_name : (image.media_name | localdateformat:'MMM DD,YYYY h:mm A')}}
+                            </h5>
+
+                            <!-- <h5>{{image.date | localdateformat:'MMM DD,YY h:mm A'}}</h5> -->
+
+
+                        </div>
+
+                    </li>
+                    <li *ngIf='!imageList.length'>
+                        <p>No Image Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-email">
+                <h4>Voice Recordings:<button *ngIf="voiceRecList.length" id="view-all"
+                        (click)="viewMedia('voice_record')" class="cus-btn">View All</button></h4>
+                <ul>
+                    <li id="grid-view-icon" *ngFor="let voiceRec of voiceRecList;let i of index;">
+                        <div class="chat_voice" (click)='playorPauseAudio(voiceRec.media_url,i)'>
+
+                            <i *ngIf='(vicRecIndex == i) && isPaused' class="fa fa-play-circle customize_voice"
+                                aria-hidden="true"></i>
+                            <i *ngIf='(vicRecIndex == i) && isPlaying && !isPaused'
+                                class="fa fa-pause-circle  customize_voice" aria-hidden="true"></i>
+
+                            <!-- <p *ngIf='(vicRecIndex == i) && (isPlaying || isPaused)'>{{curPlayTime || '-'}}</p> -->
+                            <i *ngIf='vicRecIndex != i' class="fa fa-microphone  customize_voice"
+                                aria-hidden="true"></i>
+                            <h5>{{voiceRec.media_name | localdateformat:'MMM DD,YYYY h:mm A'}}</h5>
+
+                            <!-- <div class="row"><label class="col-md-4">Duration</label>
+                                <p class="col-md-8">: {{voiceRec.duration}} s</p>
+                            </div> -->
+                            <p *ngIf='(vicRecIndex == i) && (isPlaying || isPaused)'>{{curPlayTime || '-'}}</p>
+                            <p *ngIf='vicRecIndex != i'>{{voiceRec.duration+'s' || '-'}}</p>
+                            <!-- <p>{{voiceRec.duration}}s</p> -->
+                        </div>
+                    </li>
+                    <li *ngIf='!voiceRecList.length'>
+                        <p>No Voice Record Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-email">
+                <h4>Emails:</h4>
+                <ul>
+                    <li id="grid-view" *ngFor="let email of emailList;">
+                        <div class="chat_ib">
+                            <h5>{{email.sender_name}}<span class="chat_date">{{email.received_date |
+                                    localdateformat:'MMM DD,YYYY h:mm A'}}</span>
+                            </h5>
+                            <p>{{email.subject}}</p>
+                        </div>
+                    </li>
+                    <li *ngIf='!emailList.length'>
+                        <p>No Email Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-message">
+                <h4>Ring Doorbell Files:<button *ngIf="ringDoorList.length" id="view-all"
+                        (click)="viewMedia('ringdoor')" class="cus-btn">View All</button></h4>
+                <ul>
+                    <li id="grid-view" *ngFor="let ring of ringDoorList;">
+                        <div class="chat_ib">
+                            <h5>{{ring.description ? ring.description : ''}}<span
+                                    class="chat_date">{{ring.ring_created_at | localdateformat:'MMM DD,YYYY h:mm
+                                    A'}}</span>
+                            </h5>
+                            <p>{{ring.kind}}</p>
+                        </div>
+                    </li>
+                    <li *ngIf='!ringDoorList.length'>
+                        <p>No Ring doorbell Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-message">
+                <h4>Text Messages:<button *ngIf="messageList.length" id="view-all" (click)="viewMedia('message')"
+                        class="cus-btn">View All</button></h4>
+                <ul>
+                    <li id="grid-view" *ngFor="let message of messageList;">
+                        <div class="chat_ib">
+                            <h5>{{message.contact_name ? message.contact_name : message.sender_number}}<span
+                                    class="chat_date">{{message.message_date | localdateformat:'MMM DD,YYYY h:mm
+                                    A'}}</span>
+                            </h5>
+                            <p>{{message.message}}</p>
+                        </div>
+                    </li>
+                    <li *ngIf='!messageList.length'>
+                        <p>No Message Available</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="upload-email">
+                <h4>Call logs:<button *ngIf="callLogList.length" id="view-all" (click)="viewMedia('call_logs')"
+                        class="cus-btn">View All</button></h4>
+                <ul>
+                    <li id="grid-view" *ngFor="let callLogs of callLogList;">
+                        <div class="chat_ib">
+                            <h5>{{callLogs.contact_name ? callLogs.contact_name : callLogs.phone_number}}<span
+                                    class="chat_date">{{callLogs.call_date | localdateformat:'MMM DD,YYYY h:mm
+                                    A'}}</span>
+                            </h5>
+                            <div class="row"><label class="col-md-4">Type</label>
+                                <p class="col-md-8">: {{callLogs.call_type == 'incoming_call'? 'Incoming
+                                    call':callLogs.call_type == 'outgoing_call' ? 'Outgoing call': 'Missed call'}}
+                                </p>
+                            </div>
+                            <div class="row"><label class="col-md-4">Duration</label>
+                                <p class="col-md-8">: {{callLogs.call_duraction}} s</p>
+                            </div>
+                            <div class="row"><label class="col-md-4">Location</label>
+                                <p class="col-md-8">: {{callLogs.location}}</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li *ngIf='!callLogList.length'>
+                        <p>No Call Log Available</p>
+                    </li>
+                </ul>
+            </div>
+
+
+
+            <div class="upload-email">
+                <h4>Voice Mails:<button *ngIf="voiceMailList.length" id="view-all" (click)="viewMedia('voice_mail')"
+                        class="cus-btn">View All</button></h4>
+                <ul>
+
+
+                    <!-- <li id="grid-view" *ngFor="let voiceMail of voiceMailList;">
+                        <div class="chat_mail row" style="margin:0">
+                            <div class="chat_voice col-md-4">
+                                <div class="row" class="col-md-2">
+                                    <i *ngIf='(vicRecIndex == i) && isPaused' class="fa fa-play-circle customize_play" aria-hidden="true"></i>
+                                    <i *ngIf='(vicRecIndex == i) && isPlaying && !isPaused' class="fa fa-pause-circle  customize_play" aria-hidden="true"></i>
+
+                                    <p *ngIf='(vicRecIndex == i) && (isPlaying || isPaused)'>{{curPlayTime || '-'}}</p>
+                                    <i *ngIf='vicRecIndex != i' class="fa fa-microphone  customize_play" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+
+                                <div class="row">
+                                    <h5>{{voiceMail.contact_name}}
+                                    </h5>
+                                </div>
+                                <div class="row"><label class="col-md-4">Date</label>
+                                    <p class="col-md-8">: {{voiceMail.voicemail_date | localdateformat:'MMM DD,YY h:mm A'}} s</p>
+                                </div>
+                                <div class="row"><label class="col-md-4">Duration</label>
+                                    <p class="col-md-8">: {{voiceMail.call_duraction}} s</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li> -->
+
+                    <li id="grid-view-mail" *ngFor="let voiceMail of voiceMailList;let i of index;">
+                        <div class="chat_mail" (click)='playorPauseAudio(voiceMail.url,i)'>
+                            <i *ngIf='(vicRecIndex == i) && isPaused' class="fa fa-play-circle customize_play"
+                                aria-hidden="true"></i>
+                            <i *ngIf='(vicRecIndex == i) && isPlaying && !isPaused'
+                                class="fa fa-pause-circle  customize_play" aria-hidden="true"></i>
+
+                            <!-- <p *ngIf='(vicRecIndex == i) && (isPlaying || isPaused)'>{{curPlayTime || '-'}}</p> -->
+                            <i *ngIf='vicRecIndex != i' class="fa fa-microphone  customize_play" aria-hidden="true"></i>
+                            <div class="row" class="col-md-12">
+                                <h5 class="col-md-12">{{voiceMail.contact_name }}
+                                </h5>
+                            </div>
+
+                            <div class="row" class="col-md-12">
+                                <h5 style="color: #989898" class="col-md-12">{{voiceMail.voicemail_date |
+                                    localdateformat:'MMM DD,YYYY h:mm A'}}
+                                </h5>
+                            </div>
+
+                            <div class="row" class="col-md-12">
+                                <h5 style="color: #989898" class="col-md-12"
+                                    *ngIf='(vicRecIndex == i) && (isPlaying || isPaused)'>{{curPlayTime || '-'}}
+                                </h5>
+
+                                <h5 style="color: #989898" class="col-md-12" *ngIf='vicRecIndex != i'>
+                                    {{hhmmss(voiceMail.call_duraction,true)+'s' || '-'}}
+                                </h5>
+                            </div>
+
+
+
+                        </div>
+                    </li>
+                    <li *ngIf='!voiceMailList.length'>
+                        <p>No Voice Mail Available</p>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div id="copyright">
+        <span>&copy; MyProof. All rights reserved.</span>
+    </div>
+
+</div>
