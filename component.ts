@@ -57,6 +57,7 @@ export class ViewExperienceComponent implements OnInit {
   audio = new Audio();
   isPlaying: Boolean = false;
   isPaused: Boolean = false;
+  // HERE is userList as Array
   userList: Array<any> = []
   totalCount: Number = 0;
   status: any = 'all'
@@ -187,6 +188,7 @@ export class ViewExperienceComponent implements OnInit {
    this.userListRequest= this.dataService.getUserData().subscribe((data) => {
     const userData = data.data ? data.data : [];
     this.totalCount = userData.totalRecords ? userData.totalRecords : 0;
+    // AND HERE is userList an array but in html you try to use it like an OBJECT (Object != Array)
     this.userList = userData && userData.list && userData.list.length ? userData.list : []
     console.log(this.userList,'DD');
       

@@ -16,7 +16,9 @@
                             <button *ngIf="userType && userType == 'client'" type="button" (click)='deleteExp()'
                                 class="cus-btn">Delete</button>
 
+                            <!-- PROBLEM here userList is an array and you try to get invited_by -->
                             <button
+                        
                                 *ngIf="userType && userType == 'client' && experienceDetail.type != 'published' && userList.invited_by =='' "
                                 type="button" (click)='firstShare()' class="cus-btn">Assign Lawyer</button>
 
